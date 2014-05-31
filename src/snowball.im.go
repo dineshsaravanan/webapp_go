@@ -3,16 +3,25 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
-func hello(r http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(r, "Hello world!");
+func Hello(r http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	name := vars["name"]
+	if name == "" {
+		name = "World"
+	}
+	fmt.Fprintf(r, "Hello %s!", name)
 }
 
 func main() {
-	http.HandleFunc("/", hello)
+	r := mux.NewRouter()
 
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	r.HandleFunc("/", Hello)
+	r.HandleFunc("/{name}", Hello)
+
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
 	}
 }
