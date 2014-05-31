@@ -1,0 +1,14 @@
+#!/bin/bash
+mkdir -p data &&
+mkdir -p data/redis &&
+mkdir -p data/db &&
+docker run -d -p 6379:6379 -v $(pwd)/data/redis:/data --name redis dockerfile/redis &&
+docker run -d -name="mariadb" \
+             -p 127.0.0.1:3306:3306 \
+             -v $(pwd)/data/db:/data \
+             -e USER="super" \
+             -e PASS="$(pwgen -s -1 16)" \
+             paintedfox/mariadb &&
+docker inspect mariadb
+
+
