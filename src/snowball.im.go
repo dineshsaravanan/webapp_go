@@ -30,7 +30,14 @@ func main() {
 	r.HandleFunc("/home", HomeHandler)
 	r.HandleFunc("/", RedirectToHome)
 
-	n := negroni.Classic()
+	n := negroni.New()
+	static := NewStatic(http.Dir("./public"))
+	static.Prefix = "/public"
+
+	n.Use(negroni.NewRecovery())
+	n.Use(negroni.NewLogger())
+
+	n.Use(static);
 
 	n.UseHandler(r)
 	n.Run(":8080")
