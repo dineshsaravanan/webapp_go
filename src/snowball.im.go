@@ -2,26 +2,36 @@ package main
 
 import (
 	"fmt"
+	"github.com/codegangsta/negroni"
 	"net/http"
 	"github.com/gorilla/mux"
+	"strings"
 )
 
-func Hello(r http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	name := vars["name"]
-	if name == "" {
-		name = "World"
+func LoginHandler(r http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(r, "Login here - me")
+}
+
+func HomeHandler(r http.ResponseWriter, req *http.Request) {
+	fmt.Fprintln(r, "home asas")
+}
+
+func RedirectToHome(r http.ResponseWriter, req *http.Request) {
+	path := req.URL.Path
+	if !strings.HasSuffix(path, "/"){
+		path += "/"
 	}
-	fmt.Fprintf(r, "Hello %s!", name)
+	http.Redirect(r, req, path+"home", http.StatusFound)
 }
 
 func main() {
 	r := mux.NewRouter()
+	r.HandleFunc("/login", LoginHandler)
+	r.HandleFunc("/home", HomeHandler)
+	r.HandleFunc("/", RedirectToHome)
 
-	r.HandleFunc("/", Hello)
-	r.HandleFunc("/{name}", Hello)
+	n := negroni.Classic()
 
-	if err := http.ListenAndServe(":8080", r); err != nil {
-		panic(err)
-	}
+	n.UseHandler(r)
+	n.Run(":8080")
 }
