@@ -4,8 +4,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
-	"log"
-	"os"
+	"github.com/dineshsaravanan/snowball.im/src/logger"
 )
 
 // Static is a middleware handler that serves static files in the given directory/filesystem.
@@ -28,8 +27,7 @@ func NewStatic(directory http.FileSystem) *Static {
 }
 
 func (s *Static) ServeHTTP(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-
-	logger := log.New(os.Stdout, "[Static] ", 0);
+	log := logger.GetLogger(r);
 
 	if r.Method != "GET" && r.Method != "HEAD" {
 		next(rw, r)
@@ -51,7 +49,7 @@ func (s *Static) ServeHTTP(rw http.ResponseWriter, r *http.Request, next http.Ha
 	}
 	f, err := s.Dir.Open(file)
 	if err != nil {
-		logger.Println("Unable to find file " + file , err)
+		log.Logger.Println("Unable to find file " + file , err)
 		next(rw, r)
 		return
 	}

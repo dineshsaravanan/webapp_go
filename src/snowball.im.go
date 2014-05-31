@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"github.com/gorilla/mux"
 	"strings"
+	//"github.com/dineshsaravanan/snowball.im/src/logger"
 )
 
 func LoginHandler(r http.ResponseWriter, req *http.Request) {
@@ -36,6 +37,7 @@ func main() {
 
 	n.Use(negroni.NewRecovery())
 	n.Use(negroni.NewLogger())
+	//n.Use(logger.NewLogger())
 
 	n.Use(static);
 
