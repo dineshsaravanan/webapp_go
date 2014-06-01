@@ -1,33 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"github.com/codegangsta/negroni"
 	"net/http"
 	"github.com/gorilla/mux"
-	"strings"
 	"github.com/dineshsaravanan/snowball.im/src/logger"
+	s "github.com/dineshsaravanan/negroni-contrib/sessions"
+	"github.com/gorilla/sessions"
 )
-
-func LoginHandler(r http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(r, "Login here - me")
-}
-
-func HomeHandler(r http.ResponseWriter, req *http.Request) {
-	fmt.Fprintln(r, "home asas")
-}
-
-func RedirectToHome(r http.ResponseWriter, req *http.Request) {
-	path := req.URL.Path
-	if !strings.HasSuffix(path, "/"){
-		path += "/"
-	}
-	http.Redirect(r, req, path+"home", http.StatusFound)
-}
 
 func main() {
 	//Create new negroni
-	n := negroni.New()
+	logger.GetStaticLogger().Logger.Println("Starting app...")
 
 	//router
 	r := mux.NewRouter()
@@ -35,6 +19,10 @@ func main() {
 	r.HandleFunc("/home", HomeHandler)
 	r.HandleFunc("/", RedirectToHome)
 
+	//Negroni is mixed here
+	n := negroni.New()
+
+	//Negroni ingredients
 	//use router
 	n.UseHandler(r)
 
@@ -46,7 +34,8 @@ func main() {
 	//Settimg up default middlewares
 	n.Use(negroni.NewRecovery())
 	n.Use(negroni.NewLogger())
-	n.Use(logger.NewLogger())
+	n.Use(s.NewSessions("alright", sessions.NewCookieStore()))
+
 	n.Use(static);
 
 	//start listening to port 8080 for http requests

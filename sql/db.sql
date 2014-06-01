@@ -19,5 +19,17 @@ CREATE TABLE authorizations (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+--changeset dinesh:2
+CREATE TABLE oauthkeys (
+    network VARCHAR(255) NOT NULL,
+    client_id VARCHAR(255) NOT NULL,
+    client_secret VARCHAR(255) NOT NULL,
+    email_address VARCHAR(255) NOT NULL,
+    PRIMARY KEY (network)
+);
 
+insert into oauthkeys VALUES ("TEST NETWORK", "TEST CLIENT ID", "TEST SECRET", "TEST EMAIL");
+
+insert into oauthkeys VALUES ("google", "google app id", "google secret", "google account mail id");
+insert into oauthkeys VALUES ("facebook", "facebook app id", "facebook secret", "facebook account mail id");
 

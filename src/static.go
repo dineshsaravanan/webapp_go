@@ -27,7 +27,7 @@ func NewStatic(directory http.FileSystem) *Static {
 }
 
 func (s *Static) ServeHTTP(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	log := logger.GetLogger(r);
+	log := logger.GetStaticLogger();
 
 	if r.Method != "GET" && r.Method != "HEAD" {
 		next(rw, r)
